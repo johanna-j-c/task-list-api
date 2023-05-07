@@ -29,11 +29,9 @@ def validate_model(cls, model_id):
 
     if not model:
         message = f"{cls.__name__} {model_id} not found"
-        abort(make_response({"messsage":message}, 404))
+        abort(make_response({"message":message}, 404))
     
     return model
-
-        
 
 @task_bp.route("", methods=["GET"])
 def get_all_tasks():
@@ -47,3 +45,20 @@ def get_one_task(task_id):
     task = validate_model(Task, task_id)
 
     return make_response({"task":task.to_dict()}, 200)
+
+@task_bp.route("/<task_id>", methods=["PUT"])
+def update_task(task_id):
+    task_data = request.get_json()
+    task_to_update = validate_model(Task, task_id)
+
+    task_to_update.title = task_data["title"]
+    task_to_update.description = task_data["description"]
+    # will need to update completed_at attribute in wave 3
+
+    db.session.commit()
+
+    return make_response({"task":task_to_update.to_dict()}, 200)
+
+@task_bp.route("/<task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    pass
