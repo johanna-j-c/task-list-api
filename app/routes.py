@@ -33,10 +33,10 @@ def create_task():
 @task_bp.route("", methods=["GET"])
 def get_all_tasks():
     tasks = Task.query.all()
-    task_list = []
+    task_list = [task.to_dict() for task in tasks]
 
-    for task in tasks:
-        task_list.append(task.to_dict())
+    # for task in tasks:
+    #     task_list.append(task.to_dict())
     
     return make_response(jsonify(task_list), 200)
 
