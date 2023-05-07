@@ -13,33 +13,37 @@ def create_task():
         db.session.add(new_task)
         db.session.commit()
 
-        return make_response({
-            "task":{
-                "id": new_task.task_id,
-                "title": new_task.title,
-                "description": new_task.description,
-                "is_complete": False
-            }}, 201)
+        return make_response({"task":new_task.to_dict()}, 201)
     
     except KeyError as e:
         abort(make_response({"message":f"Missing required value: {e}"}, 400))
 
-# def validate_model(cls, model):
-#     try:
-#         model_id = int(model_id)
-#     except:
+def validate_model(cls, model_id):
+    try:
+        model_id = int(model_id)
+    except:
+        message = f"{cls.__name__} {model_id} is not valid"
+        abort(make_response({"message":message}, 400))
+    
+    model = cls.query.get(model_id)
+
+    if not model:
+        message = f"{cls.__name__} {model_id} not found"
+        abort(make_response({"messsage":message}, 404))
+    
+    return model
+
         
 
 @task_bp.route("", methods=["GET"])
 def get_all_tasks():
     tasks = Task.query.all()
     task_list = [task.to_dict() for task in tasks]
-
-    # for task in tasks:
-    #     task_list.append(task.to_dict())
     
     return make_response(jsonify(task_list), 200)
 
 @task_bp.route("/<task_id>", methods=["GET"])
-def get_one_task():
-    pass
+def get_one_task(task_id):
+    task = validate_model(Task, task_id)
+
+    return make_response({"task":task.to_dict()}, 200)
