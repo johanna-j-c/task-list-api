@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, make_response, abort
 from datetime import datetime
 from app.models.task import Task
 from app import db
+from .helper_functions import validate_model
 import requests
 import os
 from dotenv import load_dotenv
@@ -24,21 +25,6 @@ def create_task():
     
     except KeyError:
         abort(make_response({"details": "Invalid data"}, 400))
-
-def validate_model(cls, model_id):
-    try:
-        model_id = int(model_id)
-    except:
-        message = f"{cls.__name__} {model_id} is not valid"
-        abort(make_response({"message":message}, 400))
-    
-    model = cls.query.get(model_id)
-
-    if not model:
-        message = f"{cls.__name__} {model_id} not found"
-        abort(make_response({"message":message}, 404))
-    
-    return model
 
 @task_bp.route("", methods=["GET"])
 def get_all_tasks():
@@ -68,7 +54,6 @@ def update_task(task_id):
 
     task_to_update.title = task_data["title"]
     task_to_update.description = task_data["description"]
-    # will need to update completed_at attribute in wave 3
 
     db.session.commit()
 

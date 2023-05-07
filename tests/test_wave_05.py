@@ -81,7 +81,7 @@ def test_create_goal(client):
 # @pytest.mark.skip(reason="test to be completed by student")
 def test_update_goal(client, one_goal):
     # Act
-    response = client.put("/tasks/1", json={
+    response = client.put("/goals/1", json={
         "title": "Updated Test Goal Title"
     })
 
@@ -104,7 +104,7 @@ def test_update_goal(client, one_goal):
 # @pytest.mark.skip(reason="test to be completed by student")
 def test_update_goal_not_found(client):
     # Act
-    response = client.put("/tasks/1", json={
+    response = client.put("/goals/1", json={
         "title": "Updated Test Goal Title"
     })
 
