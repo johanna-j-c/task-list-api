@@ -35,13 +35,16 @@ def validate_model(cls, model_id):
 
 @task_bp.route("", methods=["GET"])
 def get_all_tasks():
-    ascending_query = request.args.get("sort")
-    if ascending_query:
+    order_query = request.args.get("sort")
+    if order_query:
         tasks = Task.query.order_by(Task.title).all()
     else:
         tasks = Task.query.all()
     
     task_list = [task.to_dict() for task in tasks]
+
+    if order_query == "desc":
+        task_list.reverse()
     
     return make_response(jsonify(task_list), 200)
 
