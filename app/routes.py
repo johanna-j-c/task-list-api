@@ -15,8 +15,8 @@ def create_task():
 
         return make_response({"task":new_task.to_dict()}, 201)
     
-    except KeyError as e:
-        abort(make_response({"message":f"Missing required value: {e}"}, 400))
+    except KeyError:
+        abort(make_response({"details": "Invalid data"}, 400))
 
 def validate_model(cls, model_id):
     try:
@@ -61,4 +61,10 @@ def update_task(task_id):
 
 @task_bp.route("/<task_id>", methods=["DELETE"])
 def delete_task(task_id):
-    pass
+    task_to_delete = validate_model(Task, task_id)
+
+    db.session.delete(task_to_delete)
+    db.session.commit()
+
+    message = f'Task {task_id} "{task_to_delete.title}" successfully deleted'
+    return make_response({"details":message}, 200)
