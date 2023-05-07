@@ -24,16 +24,22 @@ def create_task():
     except KeyError as e:
         abort(make_response({"message":f"Missing required value: {e}"}, 400))
 
+# def validate_model(cls, model):
+#     try:
+#         model_id = int(model_id)
+#     except:
+        
+
 @task_bp.route("", methods=["GET"])
 def get_all_tasks():
     tasks = Task.query.all()
     task_list = []
 
     for task in tasks:
-        task_list.append(dict(
-            title=task.title,
-            description=task.description,
-            completed_at=task.completed_at
-        ))
+        task_list.append(task.to_dict())
     
     return make_response(jsonify(task_list), 200)
+
+@task_bp.route("/<task_id>", methods=["GET"])
+def get_one_task():
+    pass
