@@ -45,7 +45,12 @@ def get_all_tasks():
 def get_one_task(task_id):
     task = validate_model(Task, task_id)
 
-    return make_response({"task":task.to_dict()}, 200)
+    if not task:
+        return []
+    elif task.goal_id:
+        return make_response({"task":task.to_dict_in_goals()}, 200)
+    else:
+        return make_response({"task":task.to_dict()}, 200)
 
 @task_bp.route("/<task_id>", methods=["PUT"])
 def update_task(task_id):

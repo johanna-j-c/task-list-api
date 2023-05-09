@@ -23,6 +23,24 @@ class Task(db.Model):
                 "description": self.description,
                 "is_complete": False,
             }
+        
+    def to_dict_in_goals(self):
+        if self.completed_at:
+            return {
+                "id": self.task_id,
+                "title": self.title,
+                "description": self.description,
+                "is_complete": True,
+                "goal_id": self.goal_id
+            }
+        else:
+            return {
+                "id": self.task_id,
+                "title": self.title,
+                "description": self.description,
+                "is_complete": False,
+                "goal_id": self.goal_id
+            }
 
     @classmethod
     def from_dict(cls, data_dict):
